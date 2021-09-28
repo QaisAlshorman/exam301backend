@@ -1,0 +1,96 @@
+const express = require('express');
+
+const cors = require('cors');
+
+const axios = require('axios');
+const { mainModule } = require('process');
+const { stringify } = require('querystring');
+
+require('dotenv').config();
+
+const server = express();
+
+server.use(cors());
+
+server.use(express.json());
+
+//mongoose
+// const mongoose =require('mongoose)
+
+let fruitModel;
+main().catch(err=>console.log(err));
+async function main(){
+
+    await mongoose.connec(process.env.MONGOOSE_URL,{useNEWUrlParser:true,useUnifiedTopolgy:true});
+    //  mongoose Schemas
+
+    const fruitSchemas =new mongoose.Schema({
+        name :String,
+        image :String,
+        price:Number,
+        ownerEmail : String
+    });
+    // Mongoose Modal 
+    fruitModel = mongoose.model('fruit', fruitSchemas)
+}
+
+// Routes
+server.get('/getFruit',getfruitHandler);
+server.get('/addToFav',addToFavHandler);
+server.get('/getFFavFruit',getFavfruitHandler);
+server.get('/updateFav/:id',updateFavtHandler);
+server.get('/deletFav/:id',deleteFavHandler);
+
+// Hndler
+function getFavfruitHandler(req,res){
+    axios
+    .get(`http://`)
+    .then (result=>{
+        res.send(result.data.fruits);
+    })
+    .catch (err =>{
+        res.send(err);
+    })
+
+
+    
+}
+
+async function addToFavHandler (req,res){
+    const {name,image,price,ownerEmail} =req.body;
+    await fruitModel.create({
+
+        name :name,
+        image: image,
+        price : price,
+        ownerEmail:ownerEmail
+    });
+    fruitModel.find({ ownerEmail:ownerEmail},(err,result)=>{
+        if (err){
+            console.log(err)
+        } else{
+            res.send(result)
+        }
+    })
+}
+function getFavfruitHandler(req ,res){
+    const email=req.query.ownerEmail;
+    fruitModel.find({ ownerEmail:email},(err,result)=>{
+        if (err){
+            console.log(err);
+
+        }else{
+            res.send(result);
+        }
+    })
+}
+function updateFavtHandler(req,res){
+    const id = req.params.id;
+    const { name , image, price,ownerEmail}=req.body;
+    fruitModel.findByIDAnUpdate(id,{name,image,price},(err,result)=>{
+
+        fruitModel.find({ownerEmail:ownerEmail},(err,result={
+            
+        }))
+    })
+}
