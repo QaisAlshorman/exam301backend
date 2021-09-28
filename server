@@ -90,7 +90,34 @@ function updateFavtHandler(req,res){
     fruitModel.findByIDAnUpdate(id,{name,image,price},(err,result)=>{
 
         fruitModel.find({ownerEmail:ownerEmail},(err,result={
-            
-        }))
+            if (err){
+                console.log(err);
+            }
+            else{
+               res.send(result);
+            }
+
+        })
     })
 }
+
+function deleteFavHandler(req,res){
+    const id=req.params.id;
+    const ownerEmail=req.query.ownerEmail;
+    fruitModel.deleteOne({_id:id},(err,result)=>{
+        fruitModel.find({ownerEmail:ownerEmail},(err,result)=>{
+
+            if (err){
+                console.log(err);
+            }
+            else{
+               res.send(result);
+            }
+
+        })
+    })
+}
+
+server.listen(PORT,()=>{
+    console.log(`listen on PORT ${PORT}`)
+}) 
